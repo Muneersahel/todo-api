@@ -1,0 +1,29 @@
+{
+  "name": "todo-api",
+  "version": "1.0.0",
+  "description": "This api expose endpoints for todo app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Muneersahel/todo-api.git"
+  },
+  "keywords": [
+    "todos",
+    "api",
+    "nodejs",
+    "endpoints",
+    "crud"
+  ],
+  "author": "Muneersahel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Muneersahel/todo-api/issues"
+  },
+  "homepage": "https://github.com/Muneersahel/todo-api#readme",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
