@@ -1,4 +1,5 @@
 const express = require("express");
+const db = require("../config/db");
 
 const router = express.Router();
 
@@ -9,60 +10,81 @@ let todos = [
 
 // READ
 router.get("/", (req, res) => {
-  res.json(todos);
+  const sql = "SELECT * FROM todos";
+  db.query(sql, (err, result) => {
+    if (err) {
+      throw err;
+    }
+    res.json(result);
+  });
 });
 
 // READ
 router.get("/:id", (req, res) => {
   const id = req.params.id;
-  const todo = todos.find((todo) => todo.id === parseInt(id));
 
-  if (!todo) {
-    return res.status(404).json({ message: "Todo not found" });
-  }
+  const sql = `SELECT * FROM todos WHERE id = ${id}`;
 
-  res.json(todo);
+  db.query(sql, (err, result) => {
+    if (err) {
+      throw err;
+    }
+    res.json(result[0]);
+  });
 });
 
 // CREATE
 router.post("/", (req, res) => {
   const title = req.body.title;
+  const author = req.body.author;
 
-  const id = todos.length + 1;
-  const newTodo = { id, title, completed: false };
+  const newTodo = { title, author, completed: false };
 
-  todos.push(newTodo);
-  res.json(newTodo);
+  const sql = "INSERT INTO todos (title, author, completed) VALUES (?, ?, ?)";
+  db.query(sql, [title, author, false], (err, result) => {
+    if (err) {
+      throw err;
+    }
+    newTodo.id = result.insertId;
+    res.json(newTodo);
+  });
 });
 
 // UPDATE
 router.put("/:id", (req, res) => {
   const id = req.params.id;
-  const todo = todos.find((todo) => todo.id === parseInt(id));
 
-  if (!todo) {
-    return res.status(404).json({ message: "Todo not found" });
-  }
-
+  const title = req.body.title;
+  const author = req.body.author;
   const completed = req.body.completed;
 
-  todo.completed = completed;
+  const sql =
+    "UPDATE todos SET title = ?, author = ?, completed = ? WHERE id = ?";
 
-  res.json(todo);
+  db.query(sql, [title, author, completed, id], (err, result) => {
+    if (err) {
+      throw err;
+    }
+
+    const updatedTodo = { id: parseInt(id), title, author, completed };
+
+    res.json(updatedTodo);
+  });
 });
 
 // DELETE
 router.delete("/:id", (req, res) => {
   const id = req.params.id;
-  const todo = todos.find((todo) => todo.id === parseInt(id));
 
-  if (!todo) {
-    return res.status(404).json({ message: "Todo not found" });
-  }
+  const sql = "DELETE FROM todos WHERE id = ?";
 
-  todos = todos.filter((t) => t.id !== todo.id);
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      throw err;
+    }
 
-  res.json(todo);
+    res.json({ message: "Todo deleted" });
+  });
 });
 
 module.exports = router;

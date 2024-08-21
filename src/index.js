@@ -1,8 +1,16 @@
 const express = require("express");
+const db = require("./config/db");
 const todos = require("./routes/todos");
 
 const app = express();
 const port = 3000;
+
+db.connect((err) => {
+  if (err) {
+    throw err;
+  }
+  console.log("Connected to database MYSQL");
+});
 
 app.use(express.json());
 
